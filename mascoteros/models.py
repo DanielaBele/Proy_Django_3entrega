@@ -19,11 +19,10 @@ class Mascota(models.Model):
     def __str__(self):
         return f"{self.nombre} ({self.especie})"
 
-class Estadía(models.Model):
-    mascota = models.ForeignKey(Mascota, on_delete=models.CASCADE)
-    fecha_ingreso = models.DateField()
-    fecha_salida = models.DateField(null=True, blank=True)
-    observaciones = models.TextField(blank=True)
 
-    def __str__(self):
-        return f"{self.mascota.nombre} - {self.fecha_ingreso} a {self.fecha_salida or 'actual'}"
+class Estadia(models.Model):
+    mascota = models.ForeignKey(Mascota, on_delete=models.CASCADE)
+    dueño = models.ForeignKey(Dueño, on_delete=models.CASCADE)
+    fecha_inicio = models.DateField()
+    fecha_fin = models.DateField()
+    observaciones = models.TextField(blank=True)

@@ -1,0 +1,70 @@
+{% extends 'mascoteros/base.html' %}
+
+{% block title %}Gestión de Mascotas{% endblock %}
+
+{% block content %}
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <h2>{% if modo == 'modificar' %}Modificar Mascota{% else %}Registrar Mascota{% endif %}</h2>
+  <form method="post" action="{% if modo == 'modificar' %}{% url 'modificar_mascota' mascota_id %}{% else %}{% url 'mascota' %}{% endif %}">
+    {% csrf_token %}
+    {{ mascota_form.as_p }}
+    <button type="submit" class="btn btn-success">
+      {% if modo == 'modificar' %}Guardar cambios{% else %}Guardar{% endif %}
+    </button>
+    {% if modo == 'modificar' %}
+      <a href="{% url 'mascota' %}" class="btn btn-secondary">Cancelar</a>
+    {% endif %}
+  </form>
+
+  {% if mascota_form.errors %}
+    <div class="alert alert-danger mt-3">
+      {{ mascota_form.errors }}
+    </div>
+  {% endif %}
+
+  <div class="container mt-5">
+    <h2 class="mb-4">Lista de Mascotas Registradas</h2>
+    <div class="table-responsive">
+      <table class="table table-striped table-bordered align-middle text-center">
+        <thead class="table-dark">
+          <tr>
+            <th>Nombre</th>
+            <th>Especie</th>
+            <th>Edad</th>
+            <th>Dueño</th>
+            <th>Email del Dueño</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for mascota in mascotas %}
+          <tr>
+            <td>{{ mascota.nombre }}</td>
+            <td>{{ mascota.especie }}</td>
+            <td>{{ mascota.edad }}</td>
+            <td>{{ mascota.dueño.nombre }}</td>
+            <td>{{ mascota.dueño.email }}</td>
+            <td>
+              <a href="{% url 'modificar_mascota' mascota.id %}" class="btn btn-sm btn-warning">Modificar</a>
+              <form action="{% url 'eliminar_mascota' mascota.id %}" method="post" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar esta mascota?');">Eliminar</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+{% endblock %}
